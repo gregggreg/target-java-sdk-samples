@@ -13,9 +13,15 @@ package com.adobe.target.sample.controller;
 
 import com.adobe.experiencecloud.ecid.visitor.VisitorState;
 import com.adobe.target.delivery.v1.model.*;
+import com.adobe.target.edge.client.Attributes;
 import com.adobe.target.edge.client.http.ResponseStatus;
 import com.adobe.target.edge.client.model.TargetDeliveryResponse;
+import com.adobe.target.sample.search.SearchProvider;
+import com.adobe.target.sample.search.SearchResult;
+import com.adobe.target.sample.search.StarTrekSearchProvider;
+import com.adobe.target.sample.search.StarWarsSearchProvider;
 import com.adobe.target.sample.service.TargetClientService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -36,6 +42,9 @@ public class TargetController {
     @Autowired
     private TargetClientService targetClientService;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
     /**
      * Mbox - Target Only
      * Make execute as well as a prefetch request in single request.
@@ -48,7 +57,7 @@ public class TargetController {
         MboxRequest executeMboxRequest = new MboxRequest().name(mbox).index(1);
         TargetDeliveryResponse targetDeliveryResponse =
                 targetClientService.getMboxTargetDeliveryResponse(Arrays.asList(executeMboxRequest), request,
-                        response);
+                        response, false);
         model.addAttribute("serverState", targetDeliveryResponse.getServerState());
         return "mboxPrefetchNotification";
     }
@@ -104,6 +113,88 @@ public class TargetController {
         model.addAttribute("serverState", targetDeliveryResponse.getServerState());
         model.addAttribute("executionTime", System.currentTimeMillis() - start);
         return "viewsTargetOnly";
+    }
+
+    /**
+     * Local Execution Example
+     * Execute target request locally without hitting a server.
+     */
+    @GetMapping("/localExecution")
+    public String localExecution(
+            Model model, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        MboxRequest executeMboxRequest = new MboxRequest().name("demo-marketing-offer1").index(1);
+        TargetDeliveryResponse targetDeliveryResponse =
+                targetClientService.getMboxTargetDeliveryResponse(
+                        Collections.singletonList(executeMboxRequest),
+                        request, response, true);
+        model.addAttribute("result",
+                objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(
+                        targetDeliveryResponse.getServerState()));
+        if (targetDeliveryResponse.getStatus() >= 300) {
+            model.addAttribute("error", true);
+            return "localExecution";
+        }
+        Option option = targetDeliveryResponse.getResponse().getExecute()
+                .getMboxes().get(0).getOptions().get(0);
+        @SuppressWarnings("unchecked")
+        Map<String, Object> content = (Map<String, Object>)option.getContent();
+        model.addAttribute("experience", content.get("experience"));
+        model.addAttribute("imageSrc", "/images/" + content.get("asset"));
+        return "localExecution";
+    }
+
+    /**
+     * Local Get Attributes Example
+     * Execute target request locally without hitting a server, using getAttributes() call.
+     */
+    @GetMapping("/localGetAttributes")
+    public String localGetAttributes(@RequestParam(name = "search", required = false) String search,
+            Model model, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        String marketingMboxName = "demo-marketing-offer1";
+        String flagsMboxName = "demo-engineering-flags";
+        Attributes attributes =
+                targetClientService.getAttributesResponse(
+                        request, response, true, marketingMboxName, flagsMboxName);
+        model.addAttribute("result",
+                objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(
+                        attributes.getResponse().getServerState()));
+        model.addAttribute("attributes", objectMapper.writerWithDefaultPrettyPrinter()
+                .writeValueAsString(attributes.toMap()));
+
+        if (attributes.getResponse().getStatus() >= 300) {
+            model.addAttribute("error", true);
+            return "localGetAttributes";
+        }
+
+        model.addAttribute("experience",
+                attributes.getFeatureString(marketingMboxName, "experience"));
+        model.addAttribute("imageSrc",
+                "/images/" + attributes.getFeatureString(marketingMboxName, "asset"));
+
+        String searchProviderId = attributes.getFeatureString(flagsMboxName, "searchProviderId");
+        SearchProvider provider =
+                "startrek".equals(searchProviderId) ?
+                        new StarTrekSearchProvider() :
+                        new StarWarsSearchProvider();
+        model.addAttribute("searchTerm", search);
+        model.addAttribute("searchMessage",
+                "Searched for "
+                + search + " with "
+                + provider.getName()
+                + " search provider");
+        model.addAttribute("searchPlaceholder", provider.getDomain());
+
+        if (search != null && search.length() > 0) {
+            try {
+                List<SearchResult> results = provider.getResults(search);
+                model.addAttribute("searchResults", results);
+            }
+            finally {
+                provider.close();
+            }
+        }
+
+        return "localGetAttributes";
     }
 
     /**

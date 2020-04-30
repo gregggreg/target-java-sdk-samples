@@ -1,0 +1,56 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="icon" href="../images/favicon.ico"/>
+    <title>Target Get Attributes Sample</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+<body>
+<div class="container">
+    <div class="py-5">
+        <h1>Target Local Get Attributes Sample</h1>
+        <p class="lead">Experience <span th:text="${experience}"></span></p>
+        <img th:src="${imageSrc}" class="rounded offer" />
+    </div>
+    <div class="py-3">
+        <h2>Search</h2>
+        <form class="form-inline">
+            <div class="form-group mx-sm-3 mb-2">
+                <input class="form-control searchbox" type="text" th:placeholder="${searchPlaceholder}" name="search" th:value="${searchTerm}">
+            </div>
+            <button type="submit" class="btn btn-primary mb-2">Search</button>
+        </form>
+        <div th:if="${searchResults} != null">
+            <p><small><span th:text="${searchMessage}"></span></small></p>
+            <table class="table table-sm table-striped">
+                <thead>
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Gender</th>
+                    <th scope="col">Birth Year</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${not #lists.isEmpty(searchResults)}" th:each="result: ${searchResults}">
+                    <td th:text="${result.name}"></td>
+                    <td th:text="${result.gender}"></td>
+                    <td th:text="${result.yearOfBirth}"></td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(searchResults)}"><td colspan="999">No results.</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="py-3">
+        <h2>Attributes</h2>
+        <pre id="attributes" class="result" th:classappend="${error} ? error : ok" th:text="${attributes}"></pre>
+    </div>
+    <div class="py-3">
+        <h2>Target Response</h2>
+        <pre id="result" class="result" th:classappend="${error} ? error : ok" th:text="${result}"></pre>
+    </div>
+</div>
+</body>
+</html>

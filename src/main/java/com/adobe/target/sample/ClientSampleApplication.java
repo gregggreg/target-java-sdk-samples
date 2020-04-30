@@ -58,6 +58,7 @@ public class ClientSampleApplication {
         ClientConfig clientConfig = ClientConfig.builder()
                 .client("emeaprod4")
                 .organizationId("0DD934B85278256B0A490D44@AdobeOrg")
+                .localEnvironment("sample")
                 .build();
 
         return TargetClient.create(clientConfig);
@@ -69,9 +70,9 @@ public class ClientSampleApplication {
             Product bag = new Product(1L, "https://images-na.ssl-images-amazon.com/images/I/61qXziTJp%2BL._UX385_" +
                     ".jpg", "Women's Luxury Leather Bag");
             repository.save(bag);
-            Product shoe = new Product(2L, "https://www.hokaoneone.com/dw/image/v2/AAFF_PRD/on/demandware" +
-                    ".static/-/Sites-masterCatalogHoka/default/dw22ba9a4c/images/white/1101943-BBLI_1" +
-                    ".jpg?sw=432&sh=350&sm=fit", "Running Shoe Nike");
+            Product shoe = new Product(2L, "https://static.nike.com/a/images/c_limit,w_592,f_auto/t_product_v1/" +
+                    "03119662-2585-4658-bed3-1fa9a19196c2/air-zoom-pegasus-37-mens-running-shoe-KLvDcj.jpg"
+                    , "Running Shoe Nike");
             repository.save(shoe);
             Product dryer = new Product(3L, "https://target.scene7.com/is/image/Target/GUEST_9125f63c-6e50-4591-834b" +
                     "-26d7e7c293cf?wid=488&hei=488&fmt=pjpeg", "InfinitiPro Hair Dryer");

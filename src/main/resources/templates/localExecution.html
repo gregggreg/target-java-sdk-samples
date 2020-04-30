@@ -1,0 +1,23 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="icon" href="../images/favicon.ico"/>
+    <title>Target Local Sample</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+<body>
+<div class="container">
+    <div class="py-5">
+        <h1>Target Local Sample</h1>
+        <p class="lead">Experience <span th:text="${experience}"></span></p>
+        <img th:src="${imageSrc}" class="rounded offer" />
+    </div>
+    <div class="py-3">
+        <h2>Target Response</h2>
+        <pre id="result" class="result" th:classappend="${error} ? error : ok" th:text="${result}"></pre>
+    </div>
+</div>
+</body>
+</html>

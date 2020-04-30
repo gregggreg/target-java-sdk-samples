@@ -13,8 +13,10 @@ package com.adobe.target.sample.service;
 
 import com.adobe.experiencecloud.ecid.visitor.CustomerState;
 import com.adobe.target.delivery.v1.model.*;
+import com.adobe.target.edge.client.Attributes;
 import com.adobe.target.edge.client.TargetClient;
 import com.adobe.target.edge.client.http.ResponseStatus;
+import com.adobe.target.edge.client.model.ExecutionMode;
 import com.adobe.target.edge.client.model.TargetCookie;
 import com.adobe.target.edge.client.model.TargetDeliveryRequest;
 import com.adobe.target.edge.client.model.TargetDeliveryResponse;
@@ -62,7 +64,8 @@ public class TargetClientService {
 
     public TargetDeliveryResponse getMboxTargetDeliveryResponse(List<MboxRequest> executeMboxes,
                                                                 HttpServletRequest request,
-                                                                HttpServletResponse response) {
+                                                                HttpServletResponse response,
+                                                                boolean localExecution) {
         Context context = getContext(request);
         ExecuteRequest executeRequest = new ExecuteRequest();
         executeRequest.setMboxes(executeMboxes);
@@ -70,6 +73,7 @@ public class TargetClientService {
         TargetDeliveryRequest targetDeliveryRequest = TargetDeliveryRequest.builder()
                 .context(context)
                 .execute(executeRequest)
+                .executionMode(localExecution ? ExecutionMode.LOCAL : ExecutionMode.REMOTE)
                 .cookies(getTargetCookies(request.getCookies()))
                 .build();
         try {
@@ -103,6 +107,30 @@ public class TargetClientService {
             TargetDeliveryResponse serverState = targetJavaClient.getOffers(targetDeliveryRequest);
             setCookies(serverState.getCookies(), response);
             return serverState;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public Attributes getAttributesResponse(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            boolean localExecution,
+            String ...mboxes) {
+        Context context = getContext(request);
+
+        TargetDeliveryRequest targetDeliveryRequest = TargetDeliveryRequest.builder()
+                .context(context)
+                .executionMode(localExecution ? ExecutionMode.LOCAL : ExecutionMode.REMOTE)
+                .cookies(getTargetCookies(request.getCookies()))
+                .build();
+        try {
+            Attributes attributes = targetJavaClient.getAttributes(targetDeliveryRequest, mboxes);
+            TargetDeliveryResponse serverState = attributes.getResponse();
+            setCookies(serverState.getCookies(), response);
+            return attributes;
         } catch (Exception e) {
             e.printStackTrace();
         }

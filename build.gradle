@@ -11,11 +11,14 @@ repositories {
 }
 
 dependencies {
-    compile 'com.adobe.target:target-java-sdk:1.0.0'
-    compile 'org.springframework.boot:spring-boot-starter-thymeleaf'
-    compile 'org.springframework.boot:spring-boot-starter-web'
-    compile 'org.slf4j:slf4j-simple:2.0.0-alpha0'
-    testCompile 'org.springframework.boot:spring-boot-starter-test'
+    implementation 'com.adobe.target:java-sdk:1.2.0'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.slf4j:slf4j-simple:2.0.0-alpha0'
+    implementation "com.fasterxml.jackson.core:jackson-core:2.9.8"
+    implementation "com.fasterxml.jackson.core:jackson-databind:2.9.8"
+    implementation "com.konghq:unirest-java:3.0.00"
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
 dependencyManagement {
