@@ -167,11 +167,11 @@ public class TargetController {
         }
 
         model.addAttribute("experience",
-                attributes.getFeatureString(marketingMboxName, "experience"));
+                attributes.getString(marketingMboxName, "experience"));
         model.addAttribute("imageSrc",
-                "/images/" + attributes.getFeatureString(marketingMboxName, "asset"));
+                "/images/" + attributes.getString(marketingMboxName, "asset"));
 
-        String searchProviderId = attributes.getFeatureString(flagsMboxName, "searchProviderId");
+        String searchProviderId = attributes.getString(flagsMboxName, "searchProviderId");
         SearchProvider provider =
                 "startrek".equals(searchProviderId) ?
                         new StarTrekSearchProvider() :

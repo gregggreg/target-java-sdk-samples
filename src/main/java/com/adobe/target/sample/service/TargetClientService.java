@@ -73,7 +73,7 @@ public class TargetClientService {
         TargetDeliveryRequest targetDeliveryRequest = TargetDeliveryRequest.builder()
                 .context(context)
                 .execute(executeRequest)
-                .executionMode(localExecution ? ExecutionMode.LOCAL : ExecutionMode.REMOTE)
+                .executionMode(localExecution ? ExecutionMode.LOCAL : ExecutionMode.HYBRID)
                 .cookies(getTargetCookies(request.getCookies()))
                 .build();
         try {
@@ -123,7 +123,7 @@ public class TargetClientService {
 
         TargetDeliveryRequest targetDeliveryRequest = TargetDeliveryRequest.builder()
                 .context(context)
-                .executionMode(localExecution ? ExecutionMode.LOCAL : ExecutionMode.REMOTE)
+                .executionMode(localExecution ? ExecutionMode.LOCAL : ExecutionMode.HYBRID)
                 .cookies(getTargetCookies(request.getCookies()))
                 .build();
         try {
