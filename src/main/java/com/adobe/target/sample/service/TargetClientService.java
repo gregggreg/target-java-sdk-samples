@@ -56,6 +56,7 @@ public class TargetClientService {
                 .context(context)
                 .execute(executeRequest)
                 .cookies(targetCookies)
+                .executionMode(ExecutionMode.REMOTE)
                 .build();
         TargetDeliveryResponse serverState = targetJavaClient.getOffers(targetDeliveryRequest);
         setCookies(serverState.getCookies(), response);
@@ -102,6 +103,7 @@ public class TargetClientService {
                 .execute(executeRequest)
                 .prefetch(prefetchRequest)
                 .cookies(getTargetCookies(request.getCookies()))
+                .executionMode(ExecutionMode.REMOTE)
                 .build();
         try {
             TargetDeliveryResponse serverState = targetJavaClient.getOffers(targetDeliveryRequest);
@@ -166,6 +168,7 @@ public class TargetClientService {
                 .context(context)
                 .notifications(notifications)
                 .cookies(getTargetCookies(request.getCookies()))
+                .executionMode(ExecutionMode.REMOTE)
                 .build();
 
         ResponseStatus status = targetJavaClient.sendNotifications(targetDeliveryRequest);
@@ -186,6 +189,7 @@ public class TargetClientService {
                 .context(context)
                 .prefetch(prefetchRequest)
                 .cookies(getTargetCookies(request.getCookies()))
+                .executionMode(ExecutionMode.REMOTE)
                 .customerIds(customerIds)
                 .build();
     }

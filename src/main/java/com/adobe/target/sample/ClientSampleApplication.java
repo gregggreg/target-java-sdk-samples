@@ -13,6 +13,9 @@ package com.adobe.target.sample;
 
 import com.adobe.target.edge.client.ClientConfig;
 import com.adobe.target.edge.client.TargetClient;
+import com.adobe.target.edge.client.model.ExecutionMode;
+import com.adobe.target.edge.client.model.local.LocalExecutionHandler;
+import com.adobe.target.edge.client.service.TargetClientException;
 import com.adobe.target.sample.model.Product;
 import com.adobe.target.sample.model.ProductRepository;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -27,9 +30,13 @@ import org.springframework.core.convert.converter.Converter;
 import com.adobe.target.sample.model.InMemoryProductRepository;
 
 import javax.annotation.PostConstruct;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @SpringBootApplication
 public class ClientSampleApplication {
+
+    private static final Logger log = Logger.getLogger(ClientSampleApplication.class.getName());
 
     public static void main(String[] args) {
         System.setProperty(SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "DEBUG");
@@ -59,6 +66,23 @@ public class ClientSampleApplication {
                 .client("emeaprod4")
                 .organizationId("0DD934B85278256B0A490D44@AdobeOrg")
                 .localEnvironment("sample")
+                .defaultExecutionMode(ExecutionMode.HYBRID)
+                .localExecutionHandler(new LocalExecutionHandler() {
+                    @Override
+                    public void localExecutionReady() {
+                        log.info("Local Execution Ready");
+                    }
+
+                    @Override
+                    public void artifactDownloadSucceeded(byte[] bytes) {
+                        log.info("Local Execution Artifact Download Succeeded");
+                    }
+
+                    @Override
+                    public void artifactDownloadFailed(TargetClientException e) {
+                        log.log(Level.WARNING, "Local Execution Artifact Download Failed", e);
+                    }
+                })
                 .build();
 
         return TargetClient.create(clientConfig);
