@@ -16,7 +16,7 @@ import com.adobe.target.delivery.v1.model.*;
 import com.adobe.target.edge.client.Attributes;
 import com.adobe.target.edge.client.TargetClient;
 import com.adobe.target.edge.client.http.ResponseStatus;
-import com.adobe.target.edge.client.model.ExecutionMode;
+import com.adobe.target.edge.client.model.DecisioningMethod;
 import com.adobe.target.edge.client.model.TargetCookie;
 import com.adobe.target.edge.client.model.TargetDeliveryRequest;
 import com.adobe.target.edge.client.model.TargetDeliveryResponse;
@@ -56,7 +56,7 @@ public class TargetClientService {
                 .context(context)
                 .execute(executeRequest)
                 .cookies(targetCookies)
-                .executionMode(ExecutionMode.REMOTE)
+                .decisioningMethod(DecisioningMethod.SERVER_SIDE)
                 .build();
         TargetDeliveryResponse serverState = targetJavaClient.getOffers(targetDeliveryRequest);
         setCookies(serverState.getCookies(), response);
@@ -66,7 +66,7 @@ public class TargetClientService {
     public TargetDeliveryResponse getMboxTargetDeliveryResponse(List<MboxRequest> executeMboxes,
                                                                 HttpServletRequest request,
                                                                 HttpServletResponse response,
-                                                                boolean localExecution) {
+                                                                boolean onDeviceDecisioning) {
         Context context = getContext(request);
         ExecuteRequest executeRequest = new ExecuteRequest();
         executeRequest.setMboxes(executeMboxes);
@@ -74,7 +74,7 @@ public class TargetClientService {
         TargetDeliveryRequest targetDeliveryRequest = TargetDeliveryRequest.builder()
                 .context(context)
                 .execute(executeRequest)
-                .executionMode(localExecution ? ExecutionMode.LOCAL : ExecutionMode.HYBRID)
+                .decisioningMethod(onDeviceDecisioning ? DecisioningMethod.ON_DEVICE : DecisioningMethod.HYBRID)
                 .cookies(getTargetCookies(request.getCookies()))
                 .build();
         try {
@@ -103,7 +103,7 @@ public class TargetClientService {
                 .execute(executeRequest)
                 .prefetch(prefetchRequest)
                 .cookies(getTargetCookies(request.getCookies()))
-                .executionMode(ExecutionMode.REMOTE)
+                .decisioningMethod(DecisioningMethod.SERVER_SIDE)
                 .build();
         try {
             TargetDeliveryResponse serverState = targetJavaClient.getOffers(targetDeliveryRequest);
@@ -119,13 +119,13 @@ public class TargetClientService {
     public Attributes getAttributesResponse(
             HttpServletRequest request,
             HttpServletResponse response,
-            boolean localExecution,
+            boolean onDeviceDecisioning,
             String ...mboxes) {
         Context context = getContext(request);
 
         TargetDeliveryRequest targetDeliveryRequest = TargetDeliveryRequest.builder()
                 .context(context)
-                .executionMode(localExecution ? ExecutionMode.LOCAL : ExecutionMode.HYBRID)
+                .decisioningMethod(onDeviceDecisioning ? DecisioningMethod.ON_DEVICE : DecisioningMethod.HYBRID)
                 .cookies(getTargetCookies(request.getCookies()))
                 .build();
         try {
@@ -168,7 +168,7 @@ public class TargetClientService {
                 .context(context)
                 .notifications(notifications)
                 .cookies(getTargetCookies(request.getCookies()))
-                .executionMode(ExecutionMode.REMOTE)
+                .decisioningMethod(DecisioningMethod.SERVER_SIDE)
                 .build();
 
         ResponseStatus status = targetJavaClient.sendNotifications(targetDeliveryRequest);
@@ -189,7 +189,7 @@ public class TargetClientService {
                 .context(context)
                 .prefetch(prefetchRequest)
                 .cookies(getTargetCookies(request.getCookies()))
-                .executionMode(ExecutionMode.REMOTE)
+                .decisioningMethod(DecisioningMethod.SERVER_SIDE)
                 .customerIds(customerIds)
                 .build();
     }

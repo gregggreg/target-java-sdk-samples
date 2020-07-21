@@ -13,8 +13,8 @@ package com.adobe.target.sample;
 
 import com.adobe.target.edge.client.ClientConfig;
 import com.adobe.target.edge.client.TargetClient;
-import com.adobe.target.edge.client.model.ExecutionMode;
-import com.adobe.target.edge.client.model.local.LocalExecutionHandler;
+import com.adobe.target.edge.client.model.DecisioningMethod;
+import com.adobe.target.edge.client.model.ondevice.OnDeviceDecisioningHandler;
 import com.adobe.target.edge.client.service.TargetClientException;
 import com.adobe.target.sample.model.Product;
 import com.adobe.target.sample.model.ProductRepository;
@@ -66,21 +66,21 @@ public class ClientSampleApplication {
                 .client("emeaprod4")
                 .organizationId("0DD934B85278256B0A490D44@AdobeOrg")
                 .localEnvironment("sample")
-                .defaultExecutionMode(ExecutionMode.HYBRID)
-                .localExecutionHandler(new LocalExecutionHandler() {
+                .defaultDecisioningMethod(DecisioningMethod.HYBRID)
+                .onDeviceDecisioningHandler(new OnDeviceDecisioningHandler() {
                     @Override
-                    public void localExecutionReady() {
-                        log.info("Local Execution Ready");
+                    public void onDeviceDecisioningReady() {
+                        log.info("On-device Decisioning Ready");
                     }
 
                     @Override
                     public void artifactDownloadSucceeded(byte[] bytes) {
-                        log.info("Local Execution Artifact Download Succeeded");
+                        log.info("On-device Decisioning Artifact Download Succeeded");
                     }
 
                     @Override
                     public void artifactDownloadFailed(TargetClientException e) {
-                        log.log(Level.WARNING, "Local Execution Artifact Download Failed", e);
+                        log.log(Level.WARNING, "On-device Decisioning Artifact Download Failed", e);
                     }
                 })
                 .build();

@@ -116,11 +116,11 @@ public class TargetController {
     }
 
     /**
-     * Local Execution Example
-     * Execute target request locally without hitting a server.
+     * On-device Decisioning Example
+     * Execute target request on device without hitting a server.
      */
-    @GetMapping("/localExecution")
-    public String localExecution(
+    @GetMapping("/onDeviceDecisioning")
+    public String onDeviceDecisioning(
             Model model, HttpServletRequest request, HttpServletResponse response) throws Exception {
         MboxRequest executeMboxRequest = new MboxRequest().name("demo-marketing-offer1").index(1);
         TargetDeliveryResponse targetDeliveryResponse =
@@ -132,7 +132,7 @@ public class TargetController {
                         targetDeliveryResponse.getServerState()));
         if (targetDeliveryResponse.getStatus() >= 300) {
             model.addAttribute("error", true);
-            return "localExecution";
+            return "onDeviceDicisioning";
         }
         Option option = targetDeliveryResponse.getResponse().getExecute()
                 .getMboxes().get(0).getOptions().get(0);
@@ -140,16 +140,16 @@ public class TargetController {
         Map<String, Object> content = (Map<String, Object>)option.getContent();
         model.addAttribute("experience", content.get("experience"));
         model.addAttribute("imageSrc", "/images/" + content.get("asset"));
-        return "localExecution";
+        return "onDeviceDecisioning";
     }
 
     /**
-     * Local Get Attributes Example
-     * Execute target request locally without hitting a server, using getAttributes() call.
+     * On-device Get Attributes Example
+     * Execute target request on device without hitting a server, using getAttributes() call.
      */
-    @GetMapping("/localGetAttributes")
-    public String localGetAttributes(@RequestParam(name = "search", required = false) String search,
-            Model model, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    @GetMapping("/onDeviceGetAttributes")
+    public String onDeviceGetAttributes(@RequestParam(name = "search", required = false) String search,
+                                        Model model, HttpServletRequest request, HttpServletResponse response) throws Exception {
         String marketingMboxName = "demo-marketing-offer1";
         String flagsMboxName = "demo-engineering-flags";
         Attributes attributes =
@@ -163,7 +163,7 @@ public class TargetController {
 
         if (attributes.getResponse().getStatus() >= 300) {
             model.addAttribute("error", true);
-            return "localGetAttributes";
+            return "onDeviceGetAttributes";
         }
 
         model.addAttribute("experience",
@@ -194,7 +194,7 @@ public class TargetController {
             }
         }
 
-        return "localGetAttributes";
+        return "onDeviceGetAttributes";
     }
 
     /**
