@@ -65,7 +65,7 @@ public class ClientSampleApplication {
         ClientConfig clientConfig = ClientConfig.builder()
                 .client("emeaprod4")
                 .organizationId("0DD934B85278256B0A490D44@AdobeOrg")
-                .localEnvironment("sample")
+                .onDeviceEnvironment("sample")
                 .defaultDecisioningMethod(DecisioningMethod.HYBRID)
                 .onDeviceDecisioningHandler(new OnDeviceDecisioningHandler() {
                     @Override

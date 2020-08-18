@@ -132,7 +132,7 @@ public class TargetController {
                         targetDeliveryResponse.getServerState()));
         if (targetDeliveryResponse.getStatus() >= 300) {
             model.addAttribute("error", true);
-            return "onDeviceDicisioning";
+            return "onDeviceDecisioning";
         }
         Option option = targetDeliveryResponse.getResponse().getExecute()
                 .getMboxes().get(0).getOptions().get(0);
